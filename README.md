@@ -22,8 +22,7 @@
 
 <img src="https://github.com/shuashuai/wechat-canyin/blob/master/xiaoguo/5.jpg" width="320px" style="display:inline;">
 
-### 开发环境：
-微信web开发者工具 v0.9.092300
+
 
 ### 项目地址：
-https://github.com/liuxuanqiang/wechat-weapp-mall
+https://github.com/shaushuai/wechat-canyin
