@@ -1,37 +1,88 @@
 //app.js
+var con =require("utils/api.js");
+
 App({
-  onLaunch: function () {
-    console.log('App Launch')
+  onLaunch: function(){
     //调用API从本地缓存中获取数据
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
+    var logs = wx.getStorageSync('logs') || [];
+    logs.unshift(Date.now());
+    wx.setStorageSync('logs', logs);
+    this.getUserInfo();
+    // this.getAddress();
+ 
   },
-  getUserInfo:function(cb){
-    var that = this
-    if(this.globalData.userInfo){
+  getUserInfo: function(){
+    var that =this;
+    if (this.globalData.userInfo) {
       typeof cb == "function" && cb(this.globalData.userInfo)
-    }else{
-      //调用登录接口
+    } else {
+
       wx.login({
-        success: function () {
+        success: function (o) {
+          // console.log(o);
           wx.getUserInfo({
             success: function (res) {
+              // console.log(res);
+              wx.request({
+                url: con.index_slogin,
+                method: "POST",
+                header: {
+                  'content-type': 'application/x-www-form-urlencoded'
+                },
+                data: {
+                  code: o.code,
+                  wxappid: con.wxappid,
+                  nickname: res.userInfo.nickName,
+                  pic: res.userInfo.avatarUrl
+                },
+                success: function (res) {
+                  // console.log(res);
+                  that.globalData.fansid = res.data.fansid;
+                  console.log(res.data.fansid);
+                  wx.setStorage({
+                    key: 'fansid',
+                    data: res.data.fansid,
+                  })
+                  console.log(222222,res.data.openid, res);
+                  wx.setStorage({
+                    key: 'openid',
+                    data: res.data.openid,
+                  })
+                }
+              })
+
               that.globalData.userInfo = res.userInfo
-              typeof cb == "function" && cb(that.globalData.userInfo)
+              // console.log(33333333,res.userInfo);
             }
           })
         }
-      })
+      });
     }
   },
-  onShow: function () {
-    console.log('App Show')
-  },
-  onHide: function () {
-    console.log('App Hide')
-  },
+  // getAddress: function () {
+  //   var that = this;
+  //   wx.chooseAddress({
+  //     success: function (r) {
+  //       console.log(r);
+  //     }
+  //   })
+
+  // },
   globalData:{
-    userInfo:null
+    fansId: ""
+  },
+  onPullDownRefresh: function () {
+    wx.stopPullDownRefresh();
   }
-})
+
+    
+});
+
+
+
+
+
+
+
+
+
